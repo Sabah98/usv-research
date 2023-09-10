@@ -23,6 +23,10 @@ def gen_figures(file_name, overlap=3, winlen=10, freq_min=15,
                         columns=np.arange(0, dt*tf.shape[1], dt))
 
     plt_dat = stft_df.loc[(stft_df.index > freq_min) & (stft_df.index < freq_max),:]
+    
+    # Normalize the spectrogram data
+    plt_dat = (plt_dat - np.min(plt_dat)) / (np.max(plt_dat) - np.min(plt_dat))
+    
     v_max = np.percentile(plt_dat, th_perc_high)
     v_min = np.percentile(plt_dat, th_perc_low)
 
@@ -42,9 +46,10 @@ def gen_figures(file_name, overlap=3, winlen=10, freq_min=15,
         plt_dat[plt_dat < v_min] = v_min
         plt_dat[plt_dat > v_max] = v_max
 
-        plt.imsave(fname=f"usv_image_E_CUE/{Path(file_name).with_suffix('').name}_{start_time}_{end_time}.png", 
-                   arr=plt_dat, cmap="gray_r", vmin=v_min, vmax=v_max)
+        plt.imsave(fname=f"../test/{Path(file_name).with_suffix('').name}_{start_time}_{end_time}.png", 
+                   arr=plt_dat, cmap="binary", vmin=v_min, vmax=v_max)
         print(plt_dat.shape)
+
 
 gen_figures(file_nameX)
 
